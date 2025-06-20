@@ -1,0 +1,22 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="DemoService Suite" preserve-order="true" thread-count="1" verbose="10">
+    <parameter name="suiteParam1" value="suiteParamABC"/>
+
+    <test name="ParamTest" preserve-order="true" thread-count="1">
+        <parameter name="testParam1" value="testParamABC"/>
+        <classes>
+
+            <class name="com.example.MyCdiTest">
+                <parameter name="classParam1" value="classParamABC"/>
+                <methods>
+                    <include name="testCdiBeanInjection">
+                        <parameter name="methodParam1" value="methodParamABC"/>
+                    </include>
+                    <include name="testEjbBeanInjection"/>
+                    <!--<exclude name="abcTest"/>-->
+                </methods>
+            </class>
+            <parameter name="classesParam1" value="classesParamABC"/>
+        </classes>
+    </test>
+</suite>

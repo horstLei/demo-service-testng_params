@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>root</groupId>
+    <artifactId>demo-service-testng_params</artifactId>
+    <version>1.0</version>
+
+    <packaging>jar</packaging>
+    <name>project</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <version.testng>7.11.0</version.testng>
+        <version.arquillian>1.9.5.Final</version.arquillian>
+        <arquillian-suite-extension.version>1.2.2</arquillian-suite-extension.version>
+        <version.wildfly>18.0.1.Final</version.wildfly>
+
+        <wildfly.bom.version>18.0.1.Final</wildfly.bom.version>
+
+    </properties>
+
+    <dependencies>
+        <!-- TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${version.testng}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- suite extension -->
+        <dependency>
+            <groupId>org.eu.ingwar.tools</groupId>
+            <artifactId>arquillian-suite-extension</artifactId>
+            <version>${arquillian-suite-extension.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian TestNG Integration -->
+        <dependency>
+            <groupId>org.jboss.arquillian.testng</groupId>
+            <artifactId>arquillian-testng-container</artifactId>
+            <version>${version.arquillian}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian WildFly Managed Container -->
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>4.0.1.Final</version> <!-- 2.2.0.Final -->
+            <scope>test</scope>
+        </dependency>
+
+        <!-- CDI API (Jakarta EE 8 / Java EE 8) -->
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>2.0.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ShrinkWrap -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-impl-base</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.wildfly</groupId>
+                                    <artifactId>wildfly-dist</artifactId>
+                                    <version>${version.wildfly}</version>
+                                    <overWrite>false</overWrite>
+                                    <type>zip</type>
+                                    <outputDirectory>target</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+                <configuration>
+                    <groups>arquillian</groups> <!-- ,mytest -->
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+
+                    <properties>
+                        <property>
+                            <name>surefire.testng.verbose</name>
+                            <value>10</value> <!-- 10 max detail / -1 testng debug-->
+                        </property>
+                        <property>
+                            <name>surefire.thread-count</name>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
