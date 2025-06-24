@@ -7,9 +7,12 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.*;
+
+import java.util.Map;
 
 @ArquillianSuiteDeployment
 public class MyCdiTest extends Arquillian {
@@ -38,7 +41,17 @@ public class MyCdiTest extends Arquillian {
 
     @Parameters({"testParam1"})
     @BeforeMethod //(alwaysRun = true)
-    public void beforeMethod(@Optional("defaultTestParam") String testParam1) {
+    public void beforeMethod(ITestContext context, @Optional("defaultTestParam") String testParam1) {
+        String suiteParam = context.getSuite().getParameter("suiteParam1");
+        String testParam = context.getCurrentXmlTest().getParameter("testParam1");
+
+        System.out.println("Params from context: " + suiteParam + ", " + testParam);
+
+        Map<String, String> methodParams = context.getCurrentXmlTest().getAllParameters();
+        System.out.println("Params from context: " + methodParams);
+
+
+
         System.out.println("Before Method called param: " + testParam1);
         assert bean != null : "CDI bean should be injected";
         assert beanEJB != null : "EJB bean should be injected";
